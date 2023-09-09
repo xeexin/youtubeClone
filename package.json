@@ -1,0 +1,27 @@
+{
+  "name": "youtube",
+  "description": "Cloning youtube by using js, node js, html, pug, npm so on..",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xeexin/youtubeClone.git"
+  },
+  "scripts": {
+    "dev": "nodemon --exec babel-node index.js"
+  },
+  "author": "LIM HEE JIN",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xeexin/youtubeClone/issues"
+  },
+  "homepage": "https://github.com/xeexin/youtubeClone#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.17",
+    "@babel/node": "^7.22.15",
+    "@babel/preset-env": "^7.22.15",
+    "nodemon": "^3.0.1"
+  }
+}
