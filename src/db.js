@@ -1,7 +1,7 @@
 import { error } from "console";
 import mongoose from "mongoose";
 
-mongoose.connect(process.env.COOKIE_SECRET, {
+mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
