@@ -2,23 +2,21 @@ import User from "../models/User";
 import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 
-//global
-export const getJoin = (req, res) => {
-  res.render("join", { pageTitle: "Create Account" });
-};
+export const getJoin = (req, res) => res.render("join", { pageTitle: "Join" });
 export const postJoin = async (req, res) => {
   const { name, username, email, password, password2, location } = req.body;
+  const pageTitle = "Join";
   if (password !== password2) {
-    return res.render("join", {
-      pageTitle: "Create Account",
-      errorMessage: "PW confirmation does not match",
+    return res.status(400).render("join", {
+      pageTitle,
+      errorMessage: "Password confirmation does not match.",
     });
   }
   const exists = await User.exists({ $or: [{ username }, { email }] });
   if (exists) {
     return res.status(400).render("join", {
-      pageTitle: "Create Account",
-      errorMessage: "Username/Email is already taken",
+      pageTitle,
+      errorMessage: "This username/email is already taken.",
     });
   }
   try {
@@ -32,29 +30,27 @@ export const postJoin = async (req, res) => {
     return res.redirect("/login");
   } catch (error) {
     return res.status(400).render("join", {
-      pageTitle: "Create Account",
+      pageTitle: "Upload Video",
       errorMessage: error._message,
     });
   }
 };
-
-export const getLogin = (req, res) => {
+export const getLogin = (req, res) =>
   res.render("login", { pageTitle: "Login" });
-};
-
 export const postLogin = async (req, res) => {
   const { username, password } = req.body;
+  const pageTitle = "Login";
   const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
     return res.status(400).render("login", {
-      pageTitle: "Login",
-      errorMessage: "Username doesn't exist",
+      pageTitle,
+      errorMessage: "An account with this username does not exists.",
     });
   }
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
     return res.status(400).render("login", {
-      pageTitle: "Login",
+      pageTitle,
       errorMessage: "Wrong password",
     });
   }
@@ -62,8 +58,6 @@ export const postLogin = async (req, res) => {
   req.session.user = user;
   return res.redirect("/");
 };
-
-//user
 export const startGithubLogin = (req, res) => {
   const baseUrl = "https://github.com/login/oauth/authorize";
   const config = {
@@ -79,8 +73,8 @@ export const startGithubLogin = (req, res) => {
 export const finishGithubLogin = async (req, res) => {
   const baseUrl = "https://github.com/login/oauth/access_token";
   const config = {
-    client_id: process.env.GH_CLIENT,
-    client_secret: process.env.GH_SECRET,
+    client_id: process.env.GITHUB_CLIENT,
+    client_secret: process.env.GITHUB_SECRET,
     code: req.query.code,
   };
   const params = new URLSearchParams(config).toString();
@@ -119,7 +113,7 @@ export const finishGithubLogin = async (req, res) => {
     let user = await User.findOne({ email: emailObj.email });
     if (!user) {
       user = await User.create({
-        avartarUrl: userData.avartar_Url,
+        avatarUrl: userData.avatar_url,
         name: userData.name,
         username: userData.login,
         email: emailObj.email,
@@ -140,7 +134,5 @@ export const logout = (req, res) => {
   req.session.destroy();
   return res.redirect("/");
 };
-
 export const edit = (req, res) => res.send("Edit User");
-export const deleteUser = (req, res) => res.send("Delte User");
-export const see = (req, res) => res.send("See user");
+export const see = (req, res) => res.send("See User");

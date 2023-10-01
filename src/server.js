@@ -6,11 +6,8 @@ import rootRouter from "./routers/rootRouter";
 import videoRouter from "./routers/videoRouter";
 import userRouter from "./routers/userRouter";
 import { localsMiddleware } from "./middlewares";
-import { error } from "console";
-
 const app = express();
 const logger = morgan("dev");
-
 app.set("view engine", "pug");
 app.set("views", process.cwd() + "/src/views");
 app.use(logger);
@@ -25,16 +22,9 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  req.sessionStore.all((error, sessions) => {
-    console.log(sessions);
-    next();
-  });
-});
-
 app.use(localsMiddleware);
+
 app.use("/", rootRouter);
 app.use("/videos", videoRouter);
-app.use("/users", userRouter);
-
+app.use("/user", userRouter);
 export default app;
