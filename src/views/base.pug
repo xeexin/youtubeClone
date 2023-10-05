@@ -13,12 +13,12 @@ html(lang="ko")
                     if loggedIn
                         li
                             a(href="/videos/upload") Upload Video
+                        li
+                            a(href=`/user/${loggedInUser._id}`) #{loggedInUser.name}의 Profile
                         li 
                             a(href="/user/edit") Edit Profile
                         li
                             a(href="/user/logout")  Log Out
-                        // li
-                        //    a(href="/my-profile") #{loggedInUser.name}의 Profile
                     else
                         li
                             a(href="/join")  Join
