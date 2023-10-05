@@ -140,9 +140,10 @@ export const getEdit = (req, res) => {
 export const postEdit = async (req, res) => {
   const {
     session: {
-      user: { _id },
+      user: { _id, avatarUrl },
     },
     body: { email, username, name, location },
+    file,
   } = req;
   const findUsername = await User.findOne({ username });
   const findEmail = await User.findOne({ email });
@@ -158,6 +159,7 @@ export const postEdit = async (req, res) => {
   const updatedUser = await User.findByIdAndUpdate(
     _id,
     {
+      avatarUrl: file ? file.path : avatarUrl,
       name,
       email,
       username,
@@ -172,11 +174,37 @@ export const postEdit = async (req, res) => {
 };
 
 export const getChangePassword = (req, res) => {
+  if (req.session.user.socialOnly === true) {
+    return res.redirect("/");
+  }
   return res.render("change-password", { pageTitle: "Change Password" });
 };
 
-export const postChangePassword = (req, res) => {
-  return res.redirect("/");
+export const postChangePassword = async (req, res) => {
+  const {
+    session: {
+      user: { _id }, //현재 로그인 된 사용자
+    },
+    body: { oldPW, newPW, newPW2 },
+  } = req;
+  const user = await User.findById(_id);
+  const ok = await bcrypt.compare(oldPW, user.password);
+  if (!ok) {
+    return res.status(400).render("change-password", {
+      pageTitle: "Change Password",
+      errorMessage: "The current password is incorrect",
+    });
+  }
+  if (newPW !== newPW2) {
+    return res.status(400).render("change-password", {
+      pageTitle: "Change Password",
+      errorMessage: "The password doesn't match",
+    });
+  }
+  user.password = newPW;
+  await user.save();
+  //notification
+  return res.redirect("logout");
 };
 
 export const see = (req, res) => res.send("See User");
