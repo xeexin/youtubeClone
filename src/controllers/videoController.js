@@ -39,6 +39,7 @@ export const getEdit = async (req, res) => {
   }
   return res.render("edit", { pageTitle: `Editing: ${video.title}`, video });
 };
+
 export const postEdit = async (req, res) => {
   const { id } = req.params;
   const {
@@ -71,13 +72,14 @@ export const postUpload = async (req, res) => {
     user: { _id },
   } = req.session;
 
-  const { path: fileUrl } = req.file;
+  const { video, thumb } = req.files;
   const { title, description, hashtags } = req.body;
   try {
     const newVideo = await Video.create({
       title,
       description,
-      fileUrl,
+      fileUrl: video[0].path,
+      thumbUrl: thumb[0].path,
       owner: _id,
       createdAt: Date.now(),
       hashtags: Video.formatHashtags(hashtags),
